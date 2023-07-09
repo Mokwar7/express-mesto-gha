@@ -11,11 +11,11 @@ const checkErr = (err, res) => {
   if (err.name === 'CastError' || err.name === 'ValidationError') {
     res.status(NOT_CORRECT_DATA_ERROR_CODE).send({ message: `Data validation error: ${err.message}` });
     return;
-  };
+  }
   if (err.name === 'DocumentNotFoundError') {
     res.status(NOT_FIND_ERROR_CODE).send({ message: `Invalid ID: ${err.message}` });
     return;
-  };
+  }
 
   res.status(DEFAULT_ERROR_CODE).send({ message: `Server error: ${err.message}` });
 };
