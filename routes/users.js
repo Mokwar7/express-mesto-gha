@@ -5,7 +5,7 @@ const { getAllUsers, getUser, createUser, updateUserProfile, updateUserAvatar } 
 router.get('/', getAllUsers);
 router.get('/:id', getUser);
 router.post('/', createUser);
-router.patch('/me', updateUserProfile)
-router.patch('/me/avatar', updateUserAvatar)
+router.patch('/me', updateUserProfile);
+router.patch('/me/avatar', updateUserAvatar);
 
 module.exports = router;

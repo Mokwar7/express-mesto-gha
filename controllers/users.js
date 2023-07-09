@@ -1,4 +1,5 @@
-const User = require('../models/user')
+const User = require('../models/user');
+const { NOT_CORRECT_DATA_ERROR_CODE, NOT_FIND_ERROR_CODE, DEFAULT_ERROR_CODE, SUCCESS_CODE, CREATE_CODE, } = require('../utils/errorCodes');
 
 const checkErr = (err, res) => {
   if (err.name === "CastError" || err.name === "ValidationError") {
@@ -11,21 +12,15 @@ const checkErr = (err, res) => {
   }
 
   res.status(DEFAULT_ERROR_CODE).send({message: `Server error: ${err.message}`});
-}
-
-const NOT_CORRECT_DATA_ERROR_CODE = 400;
-const NOT_FIND_ERROR_CODE = 404;
-const DEFAULT_ERROR_CODE = 500;
-const SUCCESS_CODE = 200;
-const CREATE_CODE = 201;
+};
 
 module.exports.getAllUsers = (req, res) => {
   User.find({})
     .then((users) => {
       res.status(SUCCESS_CODE).send({data: users})
     })
-    .catch(err => checkErr(err, res))
-}
+    .catch(err => checkErr(err, res));
+};
 
 module.exports.getUser = (req, res) => {
   User.findById(req.params.id)
@@ -33,8 +28,8 @@ module.exports.getUser = (req, res) => {
     .then((user) => {
       res.status(SUCCESS_CODE).send({data: user})
     })
-    .catch(err => checkErr(err, res))
-}
+    .catch(err => checkErr(err, res));
+};
 
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body
@@ -43,12 +38,12 @@ module.exports.createUser = (req, res) => {
     .then((user) => {
       res.status(CREATE_CODE).send({data: user})
     })
-    .catch(err => checkErr(err, res))
-}
+    .catch(err => checkErr(err, res));
+};
 
 module.exports.updateUserProfile = (req, res) => {
-  const { name, about } = req.body
-  const creatorId = req.user._id
+  const { name, about } = req.body;
+  const creatorId = req.user._id;
 
   User.findByIdAndUpdate(creatorId, {name, about}, {
     new: true,
@@ -57,12 +52,12 @@ module.exports.updateUserProfile = (req, res) => {
     .then((user) => {
       res.status(SUCCESS_CODE).send({data: user})
     })
-    .catch(err => checkErr(err, res))
-}
+    .catch(err => checkErr(err, res));
+};
 
 module.exports.updateUserAvatar = (req, res) => {
-  const { avatar } = req.body
-  const creatorId = req.user._id
+  const { avatar } = req.body;
+  const creatorId = req.user._id;
 
   User.findByIdAndUpdate(creatorId, {avatar}, {
     new: true,
@@ -71,5 +66,5 @@ module.exports.updateUserAvatar = (req, res) => {
     .then((user) => {
       res.status(SUCCESS_CODE).send({data: user})
     })
-    .catch(err => checkErr(err, res))
-}
+    .catch(err => checkErr(err, res));
+};
