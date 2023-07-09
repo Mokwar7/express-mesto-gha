@@ -2,21 +2,27 @@ const User = require('../models/user')
 
 const checkErr = (err, res) => {
   if (err.name === "CastError" || err.name === "ValidationError") {
-    res.status(400).send({message: `Data validation error: ${err.message}`});
+    res.status(NOT_CORRECT_DATA_ERROR_CODE).send({message: `Data validation error: ${err.message}`});
     return;
   }
-  if (err.name === "DocumentNotFoundError" || err.name === "InvalidId") {
-    res.status(404).send({message: `Invalid ID: ${err.message}`});
+  if (err.name === "DocumentNotFoundError") {
+    res.status(NOT_FIND_ERROR_CODE).send({message: `Invalid ID: ${err.message}`});
     return;
   }
 
-  res.status(500).send({message: `Server error: ${err.message}`});
+  res.status(DEFAULT_ERROR_CODE).send({message: `Server error: ${err.message}`});
 }
+
+const NOT_CORRECT_DATA_ERROR_CODE = 400;
+const NOT_FIND_ERROR_CODE = 404;
+const DEFAULT_ERROR_CODE = 500;
+const SUCCESS_CODE = 200;
+const CREATE_CODE = 201;
 
 module.exports.getAllUsers = (req, res) => {
   User.find({})
     .then((users) => {
-      res.send({data: users})
+      res.status(SUCCESS_CODE).send({data: users})
     })
     .catch(err => checkErr(err, res))
 }
@@ -25,7 +31,7 @@ module.exports.getUser = (req, res) => {
   User.findById(req.params.id)
     .orFail()
     .then((user) => {
-      res.send({data: user})
+      res.status(SUCCESS_CODE).send({data: user})
     })
     .catch(err => checkErr(err, res))
 }
@@ -35,7 +41,7 @@ module.exports.createUser = (req, res) => {
 
   User.create({ name, about, avatar })
     .then((user) => {
-      res.send({data: user})
+      res.status(CREATE_CODE).send({data: user})
     })
     .catch(err => checkErr(err, res))
 }
@@ -49,7 +55,7 @@ module.exports.updateUserProfile = (req, res) => {
     runValidators: true
   })
     .then((user) => {
-      res.send({data: user})
+      res.status(SUCCESS_CODE).send({data: user})
     })
     .catch(err => checkErr(err, res))
 }
@@ -63,7 +69,7 @@ module.exports.updateUserAvatar = (req, res) => {
     runValidators: true
   })
     .then((user) => {
-      res.send({data: user})
+      res.status(SUCCESS_CODE).send({data: user})
     })
     .catch(err => checkErr(err, res))
 }

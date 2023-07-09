@@ -2,21 +2,27 @@ const Cards = require('../models/card')
 
 const checkErr = (err, res) => {
   if (err.name === "CastError" || err.name === "ValidationError") {
-    res.status(400).send({message: `Data validation error: ${err.message}`});
+    res.status(NOT_CORRECT_DATA_ERROR_CODE).send({message: `Data validation error: ${err.message}`});
     return;
   }
-  if (err.name === "DocumentNotFoundError" || err.name === "InvalidId") {
-    res.status(404).send({message: `Invalid ID: ${err.message}`});
+  if (err.name === "DocumentNotFoundError") {
+    res.status(NOT_FIND_ERROR_CODE).send({message: `Invalid ID: ${err.message}`});
     return;
   }
 
-  res.status(500).send({message: `Server error: ${err.message}`});
+  res.status(DEFAULT_ERROR_CODE).send({message: `Server error: ${err.message}`});
 }
+
+const NOT_CORRECT_DATA_ERROR_CODE = 400;
+const NOT_FIND_ERROR_CODE = 404;
+const DEFAULT_ERROR_CODE = 500;
+const SUCCESS_CODE = 200;
+const CREATE_CODE = 201;
 
 module.exports.getAllCards = (req, res) => {
   Cards.find({})
     .then((cards) => {
-      res.send({data: cards})
+      res.status(SUCCESS_CODE).send({data: cards})
     })
     .catch(err => checkErr(err, res))
 }
@@ -27,7 +33,7 @@ module.exports.createCard = (req, res) => {
 
   Cards.create({name, link, owner: creatorId})
     .then((card) => {
-      res.send({data: card})
+      res.status(CREATE_CODE).send({data: card})
     })
     .catch(err => checkErr(err, res))
 }
@@ -38,7 +44,7 @@ module.exports.deleteCard = (req, res) => {
   Cards.findByIdAndRemove(cardId)
     .orFail()
     .then((result) => {
-      res.send({data: result})
+      res.status(SUCCESS_CODE).send({data: result})
     })
     .catch(err => checkErr(err, res))
 }
@@ -49,11 +55,10 @@ module.exports.putLike = (req, res) => {
 
   Cards.findByIdAndUpdate(cardId, { $addToSet: { likes: creatorId }}, {
     new: true,
-    runValidators: true
   })
     .orFail()
     .then((result) => {
-      res.send({data: result})
+      res.status(SUCCESS_CODE).send({data: result})
     })
     .catch(err => checkErr(err, res))
 }
@@ -64,11 +69,10 @@ module.exports.deleteLike = (req, res) => {
 
   Cards.findByIdAndUpdate(cardId, { $pull: {likes: creatorId }}, {
     new: true,
-    runValidators: true
   })
     .orFail()
     .then((result) => {
-      res.send({data: result})
+      res.status(SUCCESS_CODE).send({data: result})
     })
     .catch(err => checkErr(err, res))
 }
