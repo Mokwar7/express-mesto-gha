@@ -2,15 +2,15 @@ const User = require('../models/user')
 
 const checkErr = (err, res) => {
   if (err.name === ("ValidationError" || "CastError")) {
-    res.status(400).send(`Data validation error: ${err.message}`);
+    res.status(400).send({message: `Data validation error: ${err.message}`});
     return;
   }
-  if (err.message === "InvalidId") {
-    res.status(404).send(`Invalid ID`);
+  if (err.name === ("InvalidId" || "DocumentNotFoundError")) {
+    res.status(404).send({message: `Invalid ID: ${err.message}`});
     return;
   }
 
-  res.status(500).send(`Server error: ${err.message}`);
+  res.status(500).send({message: `Server error: ${err.message}`});
 }
 
 module.exports.getAllUsers = (req, res) => {
@@ -23,6 +23,7 @@ module.exports.getAllUsers = (req, res) => {
 
 module.exports.getUser = (req, res) => {
   User.findById(req.params.id)
+    .orFail()
     .then((user) => {
       res.send({data: user})
     })
