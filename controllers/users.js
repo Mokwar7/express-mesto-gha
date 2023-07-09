@@ -38,7 +38,7 @@ module.exports.getUser = (req, res) => {
 };
 
 module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body
+  const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
     .then((user) => {
@@ -51,9 +51,9 @@ module.exports.updateUserProfile = (req, res) => {
   const { name, about } = req.body;
   const creatorId = req.user._id;
 
-  User.findByIdAndUpdate(creatorId, {name, about}, {
+  User.findByIdAndUpdate(creatorId, { name, about }, {
     new: true,
-    runValidators: true
+    runValidators: true,
   })
     .then((user) => {
       res.status(SUCCESS_CODE).send({ data: user });
@@ -65,9 +65,9 @@ module.exports.updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
   const creatorId = req.user._id;
 
-  User.findByIdAndUpdate(creatorId, {avatar}, {
+  User.findByIdAndUpdate(creatorId, { avatar }, {
     new: true,
-    runValidators: true
+    runValidators: true,
   })
     .then((user) => {
       res.status(SUCCESS_CODE).send({ data: user });
