@@ -1,11 +1,11 @@
 const Cards = require('../models/card')
 
 const checkErr = (err, res) => {
-  if (err.name === ("ValidationError" || "CastError")) {
+  if (err.name === "ValidationError" || "CastError") {
     res.status(400).send(`Data validation error: ${err.message}`);
     return;
   }
-  if (err.message === "InvalidId") {
+  if (err.name === "InvalidId") {
     res.status(404).send(`Invalid ID`);
     return;
   }
