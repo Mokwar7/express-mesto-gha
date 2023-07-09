@@ -4,15 +4,15 @@ const {
   NOT_FIND_ERROR_CODE,
   DEFAULT_ERROR_CODE,
   SUCCESS_CODE,
-  CREATE_CODE
- } = require('../utils/errorCodes');
+  CREATE_CODE,
+} = require('../utils/errorCodes');
 
 const checkErr = (err, res) => {
-  if (err.name === "CastError" || err.name === "ValidationError") {
+  if (err.name === 'CastError' || err.name === 'ValidationError') {
     res.status(NOT_CORRECT_DATA_ERROR_CODE).send({ message: `Data validation error: ${err.message}` });
     return;
   }
-  if (err.name === "DocumentNotFoundError") {
+  if (err.name === 'DocumentNotFoundError') {
     res.status(NOT_FIND_ERROR_CODE).send({ message: `Invalid ID: ${err.message}` });
     return;
   }
@@ -25,7 +25,7 @@ module.exports.getAllCards = (req, res) => {
     .then((cards) => {
       res.status(SUCCESS_CODE).send({ data: cards });
     })
-    .catch(err => checkErr(err, res));
+    .catch((err) => {checkErr(err, res)});
 };
 
 module.exports.createCard = (req, res) => {
@@ -36,7 +36,7 @@ module.exports.createCard = (req, res) => {
     .then((card) => {
       res.status(CREATE_CODE).send({ data: card });
     })
-    .catch(err => checkErr(err, res));
+    .catch((err) => {checkErr(err, res)});
 };
 
 module.exports.deleteCard = (req, res) => {
@@ -45,9 +45,9 @@ module.exports.deleteCard = (req, res) => {
   Cards.findByIdAndRemove(cardId)
     .orFail()
     .then((result) => {
-      res.status(SUCCESS_CODE).send({ data: result })
+      res.status(SUCCESS_CODE).send({ data: result });
     })
-    .catch(err => checkErr(err, res));
+    .catch((err) => {checkErr(err, res)});
 };
 
 module.exports.putLike = (req, res) => {
@@ -59,9 +59,9 @@ module.exports.putLike = (req, res) => {
   })
     .orFail()
     .then((result) => {
-      res.status(SUCCESS_CODE).send({ data: result })
+      res.status(SUCCESS_CODE).send({ data: result });
     })
-    .catch(err => checkErr(err, res));
+    .catch((err) => {checkErr(err, res)});
 };
 
 module.exports.deleteLike = (req, res) => {
@@ -75,5 +75,5 @@ module.exports.deleteLike = (req, res) => {
     .then((result) => {
       res.status(SUCCESS_CODE).send({ data: result })
     })
-    .catch(err => checkErr(err, res));
+    .catch((err) => {checkErr(err, res)});
 };
