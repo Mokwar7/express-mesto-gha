@@ -51,6 +51,7 @@ module.exports.putLike = (req, res) => {
     new: true,
     runValidators: true
   })
+    .orFail()
     .then((result) => {
       res.send({data: result})
     })
@@ -65,6 +66,7 @@ module.exports.deleteLike = (req, res) => {
     new: true,
     runValidators: true
   })
+    .orFail()
     .then((result) => {
       res.send({data: result})
     })
