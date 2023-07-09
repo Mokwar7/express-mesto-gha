@@ -1,13 +1,15 @@
 const Cards = require('../models/card')
 
 const checkErr = (err, res) => {
-  if (err.name === "CastError") {
-    res.status(400).send({err: `Data validation error: ${err.message}`});
-    return;
-  }
-  if (err.name === "DocumentNotFoundError") {
-    res.status(404).send({err: `Invalid ID: ${err.message}`});
-    return;
+  if (err.message.length > 1) {
+    if (err.name === "CastError") {
+      res.status(400).send({err: `Data validation error: ${err.message}`});
+      return;
+    }
+    if (err.name === "DocumentNotFoundError") {
+      res.status(404).send({err: `Invalid ID: ${err.message}`});
+      return;
+    }
   }
 
   res.status(500).send({err: `Server error: ${err.message}`});
