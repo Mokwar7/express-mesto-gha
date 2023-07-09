@@ -1,6 +1,11 @@
 const User = require('../models/user');
-const { NOT_CORRECT_DATA_ERROR_CODE, NOT_FIND_ERROR_CODE, DEFAULT_ERROR_CODE, SUCCESS_CODE, CREATE_CODE, } = require('../utils/errorCodes');
-
+const {
+  NOT_CORRECT_DATA_ERROR_CODE,
+  NOT_FIND_ERROR_CODE,
+  DEFAULT_ERROR_CODE,
+  SUCCESS_CODE,
+  CREATE_CODE,
+} = require('../utils/errorCodes');
 const checkErr = (err, res) => {
   if (err.name === "CastError" || err.name === "ValidationError") {
     res.status(NOT_CORRECT_DATA_ERROR_CODE).send({message: `Data validation error: ${err.message}`});
