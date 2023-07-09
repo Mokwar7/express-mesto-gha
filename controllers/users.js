@@ -1,11 +1,11 @@
 const User = require('../models/user')
 
 const checkErr = (err, res) => {
-  if (err.name === "CastError") {
+  if (err.name === "CastError" || err.name === "ValidationError") {
     res.status(400).send({message: `Data validation error: ${err.message}`});
     return;
   }
-  if (err.name === "DocumentNotFoundError") {
+  if (err.name === "DocumentNotFoundError" || err.name === "InvalidId") {
     res.status(404).send({message: `Invalid ID: ${err.message}`});
     return;
   }
