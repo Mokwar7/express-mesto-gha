@@ -1,16 +1,16 @@
 const Cards = require('../models/card')
 
 const checkErr = (err, res) => {
-  if (err.name === "ValidationError" || "CastError") {
-    res.status(400).send(`Data validation error: ${err.message}`);
+  if (err.name === "CastError") {
+    res.status(400).send({err: `Data validation error: ${err.message}`});
     return;
   }
-  if (err.name === "InvalidId") {
-    res.status(404).send(`Invalid ID`);
+  if (err.name === "DocumentNotFoundError") {
+    res.status(404).send({err: `Invalid ID: ${err.message}`});
     return;
   }
 
-  res.status(500).send(`Server error: ${err.message}`);
+  res.status(500).send({err: `Server error: ${err.message}`});
 }
 
 module.exports.getAllCards = (req, res) => {
@@ -35,7 +35,8 @@ module.exports.createCard = (req, res) => {
 module.exports.deleteCard = (req, res) => {
   const { cardId } = req.params
 
-  Cards.findByIdAndDelete(cardId)
+  Cards.findByIdAndRemove(cardId)
+    .orFail()
     .then((result) => {
       res.send({data: result})
     })
