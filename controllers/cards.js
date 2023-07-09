@@ -25,7 +25,7 @@ module.exports.getAllCards = (req, res) => {
     .then((cards) => {
       res.status(SUCCESS_CODE).send({ data: cards });
     })
-    .catch((err) => {checkErr(err, res)});
+    .catch((err) => { checkErr(err, res) });
 };
 
 module.exports.createCard = (req, res) => {
@@ -36,7 +36,7 @@ module.exports.createCard = (req, res) => {
     .then((card) => {
       res.status(CREATE_CODE).send({ data: card });
     })
-    .catch((err) => {checkErr(err, res)});
+    .catch((err) => { checkErr(err, res) });
 };
 
 module.exports.deleteCard = (req, res) => {
@@ -47,7 +47,7 @@ module.exports.deleteCard = (req, res) => {
     .then((result) => {
       res.status(SUCCESS_CODE).send({ data: result });
     })
-    .catch((err) => {checkErr(err, res)});
+    .catch((err) => { checkErr(err, res) });
 };
 
 module.exports.putLike = (req, res) => {
@@ -61,7 +61,7 @@ module.exports.putLike = (req, res) => {
     .then((result) => {
       res.status(SUCCESS_CODE).send({ data: result });
     })
-    .catch((err) => {checkErr(err, res)});
+    .catch((err) => { checkErr(err, res) });
 };
 
 module.exports.deleteLike = (req, res) => {
@@ -75,5 +75,5 @@ module.exports.deleteLike = (req, res) => {
     .then((result) => {
       res.status(SUCCESS_CODE).send({ data: result })
     })
-    .catch((err) => {checkErr(err, res)});
+    .catch((err) => { checkErr(err, res) });
 };
