@@ -1,6 +1,7 @@
-const User = require('../models/users');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const User = require('../models/users');
+
 const { NODE_ENV, JWT_SECRET } = process.env;
 const {
   NotCorrectDataError,
@@ -16,13 +17,13 @@ const checkErr = (err, res, next) => {
   if (err.name === 'CastError' || err.name === 'ValidationError') {
     next(new NotCorrectDataError(`Data validation error: ${err.message}`));
     return;
-  };
+  }
   if (err.name === 'DocumentNotFoundError') {
     next(new NotFindError(`Invalid ID: ${err.message}`));
     return;
-  };
+  }
   if (err.code === 11000) {
-    next(new AlreadyUsedError(`Данный email уже зарегестрирован`));
+    next(new AlreadyUsedError('Данный email уже зарегестрирован'));
     return;
   }
 
@@ -55,7 +56,13 @@ module.exports.getMyInfo = (req, res, next) => {
 };
 
 module.exports.createUser = (req, res, next) => {
-  const { name, about, avatar, password, email } = req.body;
+  const {
+    name,
+    about,
+    avatar,
+    password,
+    email
+  } = req.body;
 
   bcrypt.hash(password, 10)
   .then((hash) => {
@@ -103,11 +110,11 @@ module.exports.login = (req, res, next) => {
       const token = jwt.sign(
         { _id: user._id },
         NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
-        { expiresIn: 3600 * 24 * 7 } 
+        { expiresIn: 3600 * 24 * 7 },
       );
 
       if (!token) {
-        throw new NotCorrectTokenError('Ваш токен некорректный')
+        throw new NotCorrectTokenError('Ваш токен некорректный');
       }
 
       res

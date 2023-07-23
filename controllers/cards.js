@@ -1,4 +1,4 @@
-const Cards = require('../models/card');
+const Cards = require('../models/cards');
 const {
   NotCorrectDataError,
   NotFindError,
@@ -11,11 +11,11 @@ const checkErr = (err, res, next) => {
   if (err.name === 'CastError' || err.name === 'ValidationError') {
     next(new NotCorrectDataError(`Data validation error: ${err.message}`));
     return;
-  };
+  }
   if (err.name === 'DocumentNotFoundError') {
     next(new NotFindError(`Invalid ID: ${err.message}`));
     return;
-  };
+  }
 
   next(new DefaultError(`Invalid ID: ${err.message}`));
 };
@@ -30,7 +30,7 @@ module.exports.getAllCards = (req, res, next) => {
 
 module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
-  const { _id } = req.user
+  const { _id } = req.user;
 
   Cards.create({ name, link, owner: _id, })
     .then((card) => {
@@ -41,17 +41,16 @@ module.exports.createCard = (req, res, next) => {
 
 module.exports.deleteCard = (req, res, next) => {
   const { cardId } = req.params;
-  const { _id } = req.user
+  const { _id } = req.user;
 
   Cards.findById(cardId)
     .then((card) => {
       if (!card) {
         throw new NotFindError('Card is not found');
-      };
+      }
       if (card.owner._id !== _id) {
         return Promise.reject(new Error('Вы не владелец карточки'));
       }
-      
       return Cards.findByIdAndDelete(cardId)
         .then((result) => {
           res.status(SUCCESS_CODE).send({ data: result });
@@ -63,7 +62,7 @@ module.exports.deleteCard = (req, res, next) => {
 
 module.exports.putLike = (req, res, next) => {
   const { cardId } = req.params;
-  const { _id } = req.user
+  const { _id } = req.user;
 
   Cards.findByIdAndUpdate(cardId, { $addToSet: { likes: _id } }, {
     new: true,
@@ -78,7 +77,6 @@ module.exports.putLike = (req, res, next) => {
 module.exports.deleteLike = (req, res, next) => {
   const { cardId } = req.params;
   const { _id } = req.user
-
   Cards.findByIdAndUpdate(cardId, { $pull: { likes: _id } }, {
     new: true,
   })
