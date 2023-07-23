@@ -1,53 +1,73 @@
-const User = require('../models/user');
+const User = require('../models/users');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const { NODE_ENV, JWT_SECRET } = process.env;
 const {
-  NOT_CORRECT_DATA_ERROR_CODE,
-  NOT_FIND_ERROR_CODE,
-  DEFAULT_ERROR_CODE,
+  NotCorrectDataError,
+  NotFindError,
+  DefaultError,
+  NotCorrectTokenError,
+  AlreadyUsedError,
   SUCCESS_CODE,
   CREATE_CODE,
-} = require('../utils/errorCodes');
+} = require('../utils/errors');
 
-const checkErr = (err, res) => {
+const checkErr = (err, res, next) => {
   if (err.name === 'CastError' || err.name === 'ValidationError') {
-    res.status(NOT_CORRECT_DATA_ERROR_CODE).send({ message: `Data validation error: ${err.message}` });
+    next(new NotCorrectDataError(`Data validation error: ${err.message}`));
     return;
-  }
+  };
   if (err.name === 'DocumentNotFoundError') {
-    res.status(NOT_FIND_ERROR_CODE).send({ message: `Invalid ID: ${err.message}` });
+    next(new NotFindError(`Invalid ID: ${err.message}`));
+    return;
+  };
+  if (err.code === 11000) {
+    next(new AlreadyUsedError(`Данный email уже зарегестрирован`));
     return;
   }
 
-  res.status(DEFAULT_ERROR_CODE).send({ message: `Server error: ${err.message}` });
+  next(new DefaultError(`Server error: ${err.message}`));
 };
 
-module.exports.getAllUsers = (req, res) => {
+module.exports.getAllUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
       res.status(SUCCESS_CODE).send({ data: users });
     })
-    .catch((err) => { checkErr(err, res); });
+    .catch((err) => { checkErr(err, res, next); });
 };
 
-module.exports.getUser = (req, res) => {
+module.exports.getUser = (req, res, next) => {
   User.findById(req.params.id)
     .orFail()
     .then((user) => {
       res.status(SUCCESS_CODE).send({ data: user });
     })
-    .catch((err) => { checkErr(err, res); });
+    .catch((err) => { checkErr(err, res, next); });
 };
 
-module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
+module.exports.getMyInfo = (req, res, next) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      res.status(SUCCESS_CODE).send({ data: user });
+    })
+    .catch((err) => { checkErr(err, res, next); });
+};
 
-  User.create({ name, about, avatar })
+module.exports.createUser = (req, res, next) => {
+  const { name, about, avatar, password, email } = req.body;
+
+  bcrypt.hash(password, 10)
+  .then((hash) => {
+    User.create({ name, about, avatar, password: hash, email })
     .then((user) => {
       res.status(CREATE_CODE).send({ data: user });
     })
-    .catch((err) => { checkErr(err, res); });
+    .catch((err) => { checkErr(err, res, next); });
+  })
 };
 
-module.exports.updateUserProfile = (req, res) => {
+module.exports.updateUserProfile = (req, res, next) => {
   const { name, about } = req.body;
   const creatorId = req.user._id;
 
@@ -58,10 +78,10 @@ module.exports.updateUserProfile = (req, res) => {
     .then((user) => {
       res.status(SUCCESS_CODE).send({ data: user });
     })
-    .catch((err) => { checkErr(err, res); });
+    .catch((err) => { checkErr(err, res, next); });
 };
 
-module.exports.updateUserAvatar = (req, res) => {
+module.exports.updateUserAvatar = (req, res, next) => {
   const { avatar } = req.body;
   const creatorId = req.user._id;
 
@@ -72,5 +92,31 @@ module.exports.updateUserAvatar = (req, res) => {
     .then((user) => {
       res.status(SUCCESS_CODE).send({ data: user });
     })
-    .catch((err) => { checkErr(err, res); });
+    .catch((err) => { checkErr(err, res, next); });
+};
+
+module.exports.login = (req, res, next) => {
+  const { email, password } = req.body;
+
+  User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign(
+        { _id: user._id },
+        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
+        { expiresIn: 3600 * 24 * 7 } 
+      );
+
+      if (!token) {
+        throw new NotCorrectTokenError('Ваш токен некорректный')
+      }
+
+      res
+        .cookie('jwt', token, {
+          maxAge: 3600 * 24 * 7,
+          httpOnly: true,
+          sameSite: true,
+        })
+        .end();
+    })
+    .catch(next);
 };

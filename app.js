@@ -1,29 +1,51 @@
+require('dotenv').config();
+
 const express = require('express');
 
 const mongoose = require('mongoose');
 
-const { PORT = 3000, BASE_PATH } = process.env;
+const auth = require('./middlewares/auth');
+
+const { celebrate, Joi } = require('celebrate');
+
+const { PORT = 3000 } = process.env;
 
 const app = express();
+
+const { 
+  login,
+  createUser,
+} = require('./controllers/users');
 
 mongoose.connect('mongodb://0.0.0.0:27017/mestodb', {
   useNewUrlParser: true,
 })
-  .then((res) => {
-    console.log(res);
+  .then(() => {
+    console.log('All is fine');
   })
   .catch((err) => {
     console.log(err);
   });
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '64a98ecce59ba66fded06755',
-  };
-  next();
-});
-
 app.use(express.json());
+app.post('/signin', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required().min(8),
+  })
+}), login);
+app.post('/signup', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required().min(8),
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+    avatar: Joi.string(),
+  })
+}), createUser);
+
+//app.use(auth);
+
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
@@ -31,7 +53,10 @@ app.use('*', (req, res) => {
   res.status(404).send({ message: 'Такой страницы не существует.' });
 });
 
+app.use((err, req, res, next) => {
+  res.status(err.statusCode).send({ message: err.message });
+});
+
 app.listen(PORT, () => {
   console.log(`Ссылка на сервер: ${PORT}`);
-  console.log(BASE_PATH);
 });
