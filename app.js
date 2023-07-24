@@ -8,8 +8,6 @@ const { celebrate, Joi } = require('celebrate');
 
 const NotFindError = require('./utils/notFindError');
 
-const checkErr = require('./utils/checkErr');
-
 const auth = require('./middlewares/auth');
 
 const { PORT = 3000 } = process.env;
@@ -54,11 +52,17 @@ app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
 app.use('*', (req, res, next) => {
-  next(new NotFindError('Данная страница не найдена'))
+  next(new NotFindError('Данная страница не найдена'));
 });
 
+app.use(errors());
+
 app.use((err, req, res, next) => {
-  checkErr(err, res, next);
+  const { statusCode = 500, message, name } = err;
+  
+  res.status(statusCode).send({message: message, name: name});
+
+  next();
 });
 
 app.listen(PORT, () => {

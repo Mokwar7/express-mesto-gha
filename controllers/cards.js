@@ -1,5 +1,5 @@
 const Cards = require('../models/cards');
-const checkErr = require('../utils/checkErr')
+const checkErr = require('../utils/checkErr');
 const {
   SUCCESS_CODE,
   CREATE_CODE,

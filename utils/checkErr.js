@@ -4,29 +4,20 @@ const AlreadyUsedError = require('../utils/alreadyUsedError');
 const DefaultError = require('../utils/defaultError');
 
 const checkErr = (err, res, next) => {
-  let error;
-  if (err.name === 'CastError' || err.name === 'ValidationError' || err.name === 'Error') {
-    error = new NotCorrectDataError(`Data validation error: ${err.message}`);
-    res.status(error.statusCode).send({message: error.message});
-    next();
+  if (err.name === 'CastError' || err.name === 'ValidationError') {
+    next(new NotCorrectDataError(`Data validation error: ${err.message}`));
     return;
   }
   if (err.name === 'DocumentNotFoundError') {
-    error = new NotFindError(`Invalid ID: ${err.message}`);
-    res.status(error.statusCode).send({message: error.message});
-    next();
+    next(new NotFindError(`Invalid ID: ${err.message}`));
     return;
   }
   if (err.code === 11000) {
-    error = new AlreadyUsedError('Данный email уже зарегестрирован');
-    res.status(error.statusCode).send({message: error.message});
-    next();
+    next(new AlreadyUsedError('Данный email уже зарегестрирован'));
     return;
   }
 
-  error = new DefaultError(`Server error: ${err.message}`);
-  res.status(error.statusCode).send({message: error.message});
-  next();
+  next(new DefaultError(`Server error: ${err.message}`));
 };
 
 module.exports = checkErr;
