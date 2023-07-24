@@ -4,7 +4,7 @@ const express = require('express');
 
 const mongoose = require('mongoose');
 
-const { celebrate, Joi } = require('celebrate');
+const { celebrate, Joi, errors } = require('celebrate');
 
 const NotFindError = require('./utils/notFindError');
 
