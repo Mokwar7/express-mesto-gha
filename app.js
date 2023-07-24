@@ -6,7 +6,9 @@ const mongoose = require('mongoose');
 
 const { celebrate, Joi } = require('celebrate');
 
-const NotFindError = require('./utils/notFindError')
+const NotFindError = require('./utils/notFindError');
+
+const checkErr = require('./utils/checkErr');
 
 const auth = require('./middlewares/auth');
 
@@ -56,11 +58,7 @@ app.use('*', (req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  const { statusCode = 500, message } = err;
-  
-  res.status(statusCode).send({message: message});
-
-  next();
+  checkErr(err, res, next);
 });
 
 app.listen(PORT, () => {

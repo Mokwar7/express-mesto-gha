@@ -1,24 +1,9 @@
 const Cards = require('../models/cards');
-const NotCorrectDataError = require('../utils/notCorrectDataError');
-const NotFindError = require('../utils/notFindError');
-const DefaultError = require('../utils/defaultError');
+const checkErr = require('../utils/checkErr')
 const {
   SUCCESS_CODE,
   CREATE_CODE,
 } = require('../utils/codes');
-
-const checkErr = (err, res, next) => {
-  if (err.name === 'CastError' || err.name === 'ValidationError') {
-    next(new NotCorrectDataError(`Data validation error: ${err.message}`));
-    return;
-  }
-  if (err.name === 'DocumentNotFoundError') {
-    next(new NotFindError(`Invalid ID: ${err.message}`));
-    return;
-  }
-
-  next(new DefaultError(`Invalid ID: ${err.message}`));
-};
 
 module.exports.getAllCards = (req, res, next) => {
   Cards.find({})
