@@ -54,7 +54,8 @@ module.exports.createUser = (req, res, next) => {
         email,
       })
         .then((user) => {
-          res.status(CREATE_CODE).send({ data: user });
+          const { email, name, about, avatar } = user;
+          res.status(CREATE_CODE).send({ email, name, about, avatar });
         })
         .catch((err) => { checkErr(err, res, next); });
     });

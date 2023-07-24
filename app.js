@@ -42,7 +42,7 @@ app.post('/signup', celebrate({
     password: Joi.string().required().min(8),
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string(),
+    avatar: Joi.string().uri(),
   }),
 }), createUser)
 
@@ -60,7 +60,7 @@ app.use(errors());
 app.use((err, req, res, next) => {
   const { statusCode = 500, message, name } = err;
   
-  res.status(statusCode).send({message: message, name: name});
+  res.status(statusCode).send({ message: message });
 
   next();
 });
