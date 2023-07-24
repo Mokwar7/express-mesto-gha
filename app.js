@@ -46,14 +46,14 @@ app.post('/signup', celebrate({
   }),
 }), createUser)
 
-app.use(auth);
-
-app.use('/users', require('./routes/users'));
-app.use('/cards', require('./routes/cards'));
-
 app.use('*', (req, res, next) => {
   next(new NotFindError('Данная страница не найдена'));
 });
+
+//app.use(auth);
+
+app.use('/users', require('./routes/users'));
+app.use('/cards', require('./routes/cards'));
 
 app.use(errors());
 

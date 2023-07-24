@@ -110,7 +110,7 @@ module.exports.login = (req, res, next) => {
           httpOnly: true,
           sameSite: true,
         })
-        .end();
+        .send({message: 'авторизация прошла успешно'});
     })
     .catch((err) => { checkErr(err, res, next); });
 };
