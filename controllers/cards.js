@@ -1,18 +1,30 @@
 const Cards = require('../models/cards');
-const checkErr = require('../utils/checkErr');
 const {
   SUCCESS_CODE,
   CREATE_CODE,
 } = require('../utils/codes');
+const NotCorrectDataError = require('../utils/notCorrectDataError');
 const NotFindError = require('../utils/notFindError');
-const notAcces = require('../utils/notAcces')
+const NotAcces = require('../utils/notAcces');
+
+const checkError = (err, next) => {
+  if (err.name === 'ValidationError' || err.name === 'CastError') {
+    next(new NotCorrectDataError(`Data validation error: ${err.message}`));
+    return;
+  }
+  next(err);
+}
 
 module.exports.getAllCards = (req, res, next) => {
   Cards.find({})
     .then((cards) => {
+      if (!card) {
+        next(new NotFindError('Card is not found'));
+        return;
+      }
       res.status(SUCCESS_CODE).send({ data: cards });
     })
-    .catch((err) => { checkErr(err, res, next); });
+    .catch(err => checkError(err, next));
 };
 
 module.exports.createCard = (req, res, next) => {
@@ -23,28 +35,26 @@ module.exports.createCard = (req, res, next) => {
     .then((card) => {
       res.status(CREATE_CODE).send({ data: card });
     })
-    .catch((err) => { checkErr(err, res, next); });
+    .catch(err => checkError(err, next));
 };
 
 module.exports.deleteCard = (req, res, next) => {
   const { cardId } = req.params;
-  const { _id } = req.body;
-//ВРЕМЕННО <<
+
   Cards.findById(cardId)
-    .then((card) => {
-      if (!card) {
-        return Promise.reject(new NotFindError('Card is not found'));
-      }
-      if (card.owner._id !== _id) {
-        return Promise.reject(new notAcces('Вы не владелец карточки'));
-      }
-      return Cards.findByIdAndDelete(cardId)
-        .then((result) => {
-          res.status(SUCCESS_CODE).send({ data: result });
-        })
-        .catch((err) => { checkErr(err, res, next); });
+    .orFail(() => {
+      next(new NotFindError('Card is not found'));
+      return
     })
-    .catch((err) => { checkErr(err, res, next); });
+    .then((card) => {
+      if (card.owner.valueOf() !== req.user._id) {
+        next(new NotAcces('Вы не владелец карточки'));
+        return;
+      }
+      Card.deleteOne(card)
+        .then(() => res.send(card));
+    })
+    .catch(err => checkError(err, next));
 };
 
 module.exports.putLike = (req, res, next) => {
@@ -54,11 +64,12 @@ module.exports.putLike = (req, res, next) => {
   Cards.findByIdAndUpdate(cardId, { $addToSet: { likes: _id } }, {
     new: true,
   })
-    .orFail()
-    .then((result) => {
+  .orFail(() => {
+    next(new NotFindError('Card is not found'))
+  })    .then((result) => {
       res.status(SUCCESS_CODE).send({ data: result });
     })
-    .catch((err) => { checkErr(err, res, next); });
+    .catch(next);
 };
 
 module.exports.deleteLike = (req, res, next) => {
@@ -67,9 +78,11 @@ module.exports.deleteLike = (req, res, next) => {
   Cards.findByIdAndUpdate(cardId, { $pull: { likes: _id } }, {
     new: true,
   })
-    .orFail()
+    .orFail(() => {
+    next(new NotFindError('Card is not found'))
+    })
     .then((result) => {
       res.status(SUCCESS_CODE).send({ data: result });
     })
-    .catch((err) => { checkErr(err, res, next); });
+    .catch(err => checkError(err, next));
 };
