@@ -58,9 +58,9 @@ app.use('*', (req, res, next) => {
 app.use(errors());
 
 app.use((err, req, res, next) => {
-  const { statusCode = 500, message, name } = err;
+  const { statusCode = 500, message} = err;
   
-  res.status(statusCode).send({ message: message, name: name });
+  res.status(statusCode).send({ message: message});
 
   next();
 });

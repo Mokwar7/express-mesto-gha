@@ -5,12 +5,10 @@ const AlreadyUsedError = require('../utils/alreadyUsedError');
 const NotAcces = require('../utils/notAcces')
 
 const checkErr = (err, res, next) => {
-  if (err.name === 'ValidationError') {
+  console.log(err.name)
+
+  if (err.name === 'CastError' || err.name === 'ValidationError') {
     next(new NotCorrectDataError(`Data validation error: ${err.message}`));
-    return;
-  }
-  if (err.name === 'CastError') {
-    next(new NotAcces(`You have not acces: ${err.message}`));
     return;
   }
   if (err.name === 'TypeError') {

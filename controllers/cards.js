@@ -4,6 +4,8 @@ const {
   SUCCESS_CODE,
   CREATE_CODE,
 } = require('../utils/codes');
+const NotFindError = require('../utils/notFindError');
+const notAcces = require('../utils/notAcces')
 
 module.exports.getAllCards = (req, res, next) => {
   Cards.find({})
@@ -31,10 +33,10 @@ module.exports.deleteCard = (req, res, next) => {
   Cards.findById(cardId)
     .then((card) => {
       if (!card) {
-        return Promise.reject(new Error('Card is not found'));
+        return Promise.reject(new NotFindError('Card is not found'));
       }
       if (card.owner._id !== _id) {
-        return Promise.reject(new Error('Вы не владелец карточки'));
+        return Promise.reject(new notAcces('Вы не владелец карточки'));
       }
       return Cards.findByIdAndDelete(cardId)
         .then((result) => {
