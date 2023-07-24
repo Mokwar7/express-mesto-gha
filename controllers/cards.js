@@ -8,6 +8,7 @@ const NotFindError = require('../utils/notFindError');
 const NotAcces = require('../utils/notAcces');
 
 const checkError = (err, next) => {
+  console.log(err.name)
   if (err.name === 'ValidationError' || err.name === 'CastError') {
     next(new NotCorrectDataError(`Data validation error: ${err.message}`));
     return;
@@ -42,10 +43,7 @@ module.exports.deleteCard = (req, res, next) => {
   const { cardId } = req.params;
 
   Cards.findById(cardId)
-    .orFail(() => {
-      next(new NotFindError('Card is not found'));
-      return
-    })
+    .orFail(() => new NotFindError('Card is not found'))
     .then((card) => {
       if (card.owner.valueOf() !== req.user._id) {
         next(new NotAcces('Вы не владелец карточки'));
@@ -54,7 +52,7 @@ module.exports.deleteCard = (req, res, next) => {
       Card.deleteOne(card)
         .then(() => res.send(card));
     })
-    .catch(err => checkError(err, next));
+    .catch(next);
 };
 
 module.exports.putLike = (req, res, next) => {
@@ -64,9 +62,8 @@ module.exports.putLike = (req, res, next) => {
   Cards.findByIdAndUpdate(cardId, { $addToSet: { likes: _id } }, {
     new: true,
   })
-  .orFail(() => {
-    next(new NotFindError('Card is not found'))
-  })    .then((result) => {
+    .orFail(() => new NotFindError('Card is not found'))
+    .then((result) => {
       res.status(SUCCESS_CODE).send({ data: result });
     })
     .catch(next);
@@ -78,11 +75,9 @@ module.exports.deleteLike = (req, res, next) => {
   Cards.findByIdAndUpdate(cardId, { $pull: { likes: _id } }, {
     new: true,
   })
-    .orFail(() => {
-    next(new NotFindError('Card is not found'))
-    })
+    .orFail(() => new NotFindError('Card is not found'))
     .then((result) => {
       res.status(SUCCESS_CODE).send({ data: result });
     })
-    .catch(err => checkError(err, next));
+    .catch(next);
 };
