@@ -3,15 +3,15 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/users');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
+const NotCorrectDataError = require('../utils/notCorrectDataError');
+const NotFindError = require('../utils/notFindError');
+const NotCorrectTokenError = require('../utils/notCorrectTokenError');
+const AlreadyUsedError = require('../utils/alreadyUsedError');
+const DefaultError = require('../utils/defaultError');
 const {
-  NotCorrectDataError,
-  NotFindError,
-  DefaultError,
-  NotCorrectTokenError,
-  AlreadyUsedError,
   SUCCESS_CODE,
   CREATE_CODE,
-} = require('../utils/errors');
+} = require('../utils/codes');
 
 const checkErr = (err, res, next) => {
   if (err.name === 'CastError' || err.name === 'ValidationError') {
@@ -61,17 +61,17 @@ module.exports.createUser = (req, res, next) => {
     about,
     avatar,
     password,
-    email
+    email,
   } = req.body;
 
   bcrypt.hash(password, 10)
-  .then((hash) => {
-    User.create({ name, about, avatar, password: hash, email })
-    .then((user) => {
-      res.status(CREATE_CODE).send({ data: user });
+    .then((hash) => {
+      User.create({ name, about, avatar, password: hash, email })
+      .then((user) => {
+        res.status(CREATE_CODE).send({ data: user });
+      })
+      .catch((err) => { checkErr(err, res, next); });
     })
-    .catch((err) => { checkErr(err, res, next); });
-  })
 };
 
 module.exports.updateUserProfile = (req, res, next) => {

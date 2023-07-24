@@ -1,11 +1,11 @@
 const Cards = require('../models/cards');
+const NotCorrectDataError = require('../utils/notCorrectDataError');
+const NotFindError = require('../utils/notFindError');
+const DefaultError = require('../utils/defaultError');
 const {
-  NotCorrectDataError,
-  NotFindError,
-  DefaultError,
   SUCCESS_CODE,
   CREATE_CODE,
-} = require('../utils/errors');
+} = require('../utils/codes');
 
 const checkErr = (err, res, next) => {
   if (err.name === 'CastError' || err.name === 'ValidationError') {
@@ -32,7 +32,7 @@ module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   const { _id } = req.user;
 
-  Cards.create({ name, link, owner: _id, })
+  Cards.create({ name, link, owner: _id })
     .then((card) => {
       res.status(CREATE_CODE).send({ data: card });
     })
@@ -76,7 +76,7 @@ module.exports.putLike = (req, res, next) => {
 
 module.exports.deleteLike = (req, res, next) => {
   const { cardId } = req.params;
-  const { _id } = req.user
+  const { _id } = req.user;
   Cards.findByIdAndUpdate(cardId, { $pull: { likes: _id } }, {
     new: true,
   })
