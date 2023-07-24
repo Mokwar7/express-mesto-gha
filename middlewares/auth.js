@@ -25,5 +25,6 @@ module.exports = (req, res, next) => {
   req.user = payload;
   res.send(payload);
 
-  return next();
+  next();
+  return
 };
