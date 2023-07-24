@@ -45,8 +45,8 @@ app.post('/signup', celebrate({
     avatar: Joi.string().uri(),
   }),
 }), createUser)
-
-app.use(auth);
+//вернуть апп юз
+//app.use(auth);
 
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
@@ -59,7 +59,7 @@ app.use(errors());
 
 app.use((err, req, res, next) => {
   const { statusCode = 500, message, name} = err;
-  
+  //убрать name
   res.status(statusCode).send({ message: message, name: name});
 
   next();

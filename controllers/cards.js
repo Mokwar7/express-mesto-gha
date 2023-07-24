@@ -50,7 +50,7 @@ module.exports.deleteCard = (req, res, next) => {
         return;
       }
       Card.deleteOne(card)
-        .then(() => res.send(card));
+        .then((result) => res.send(result));
     })
     .catch(next);
 };
