@@ -66,17 +66,17 @@ module.exports.createUser = (req, res, next) => {
 
   bcrypt.hash(password, 10)
     .then((hash) => {
-      User.create({ 
+      User.create({
         name,
         about,
         avatar,
         password: hash,
-        email 
+        email,
       })
-      .then((user) => {
-        res.status(CREATE_CODE).send({ data: user });
-      })
-      .catch((err) => { checkErr(err, res, next); });
+        .then((user) => {
+          res.status(CREATE_CODE).send({ data: user });
+        })
+        .catch((err) => { checkErr(err, res, next); });
     });
 };
 
