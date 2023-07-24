@@ -26,12 +26,12 @@ module.exports.createCard = (req, res, next) => {
 
 module.exports.deleteCard = (req, res, next) => {
   const { cardId } = req.params;
-  const { _id } = req.user;
-
+  const { _id } = req.body;
+//ВРЕМЕННО <<
   Cards.findById(cardId)
     .then((card) => {
       if (!card) {
-        throw new NotFindError('Card is not found');
+        return Promise.reject(new Error('Card is not found'));
       }
       if (card.owner._id !== _id) {
         return Promise.reject(new Error('Вы не владелец карточки'));

@@ -2,10 +2,15 @@ const NotCorrectDataError = require('../utils/notCorrectDataError');
 const NotCorrectTokenError = require('../utils/notCorrectTokenError')
 const NotFindError = require('../utils/notFindError');
 const AlreadyUsedError = require('../utils/alreadyUsedError');
+const NotAcces = require('../utils/notAcces')
 
 const checkErr = (err, res, next) => {
-  if (err.name === 'CastError' || err.name === 'ValidationError') {
+  if (err.name === 'ValidationError') {
     next(new NotCorrectDataError(`Data validation error: ${err.message}`));
+    return;
+  }
+  if (err.name === 'CastError') {
+    next(new NotAcces(`You have not acces: ${err.message}`));
     return;
   }
   if (err.name === 'TypeError') {
