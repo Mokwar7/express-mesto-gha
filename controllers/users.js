@@ -112,5 +112,5 @@ module.exports.login = (req, res, next) => {
         })
         .end();
     })
-    .catch(next);
+    .catch((err) => { checkErr(err, res, next); });
 };

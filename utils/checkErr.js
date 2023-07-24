@@ -2,7 +2,6 @@ const NotCorrectDataError = require('../utils/notCorrectDataError');
 const NotCorrectTokenError = require('../utils/notCorrectTokenError')
 const NotFindError = require('../utils/notFindError');
 const AlreadyUsedError = require('../utils/alreadyUsedError');
-const DefaultError = require('../utils/defaultError');
 
 const checkErr = (err, res, next) => {
   if (err.name === 'CastError' || err.name === 'ValidationError') {
@@ -22,7 +21,7 @@ const checkErr = (err, res, next) => {
     return;
   }
 
-  next(new DefaultError(`Server error: ${err.message}`));
+  next(err);
 };
 
 module.exports = checkErr;
