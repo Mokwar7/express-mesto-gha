@@ -60,7 +60,12 @@ app.use(errors());
 app.use((err, req, res, next) => {
   const { statusCode = 500, message, name} = err;
   //убрать name
-  res.status(statusCode).send({ message: message, name: name});
+  res
+    .status(statusCode)
+    .send({ 
+      message: statusCode === 500 ? 'На сервере произошла ошибка' : message,
+      name: name
+    });
 
   next();
 });
