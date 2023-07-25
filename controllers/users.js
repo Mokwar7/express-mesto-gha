@@ -17,7 +17,7 @@ const checkErr = (err, next) => {
     next(new NotCorrectDataError(`Data validation error: ${err.message}`));
     return;
   }
-  if (error.code === 11000) {
+  if (err.code === 11000) {
     next(new AlreadyUsedError('User with this email already exist'));
     return;
   }
@@ -71,7 +71,17 @@ module.exports.createUser = (req, res, next) => {
           const { email, name, about, avatar } = user;
           res.status(CREATE_CODE).send({ email, name, about, avatar });
         })
-        .catch((err) => { checkErr(err, res, next); });
+        .catch((err) => {
+          if (err.name === 'ValidationError' || err.name === 'CastError') {
+            next(new NotCorrectDataError(`Data validation error: ${err.message}`));
+            return;
+          }
+          if (err.code === 11000) {
+            next(new AlreadyUsedError('User with this email already exist'));
+            return;
+          }
+          next(err);
+        });
     });
 };
 
