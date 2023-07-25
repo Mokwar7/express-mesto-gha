@@ -8,6 +8,8 @@ const { celebrate, Joi, errors } = require('celebrate');
 
 const NotFindError = require('./utils/notFindError');
 
+const cookieParser = require('cookie-parser');
+
 const auth = require('./middlewares/auth');
 
 const { PORT = 3000 } = process.env;
@@ -30,6 +32,7 @@ mongoose.connect('mongodb://0.0.0.0:27017/mestodb', {
   });
 
 app.use(express.json());
+app.use(cookieParser());
 app.post('/signin', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),

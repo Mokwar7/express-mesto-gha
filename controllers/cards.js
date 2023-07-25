@@ -18,7 +18,6 @@ const checkError = (err, next) => {
 
 module.exports.getAllCards = (req, res, next) => {
   Cards.find({})
-    .orFail(() => new NotFindError('Card is not found'))
     .then((cards) => {
       res.status(SUCCESS_CODE).send({ data: cards });
     })

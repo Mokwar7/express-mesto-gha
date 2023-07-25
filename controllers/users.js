@@ -30,7 +30,7 @@ module.exports.getAllUsers = (req, res, next) => {
     .then((users) => {
       res.status(SUCCESS_CODE).send({ data: users });
     })
-    .catch((err) => { checkErr(err, res, next); });
+    .catch((err) => { checkErr(err, next); });
 };
 
 module.exports.getMyInfo = (req, res, next) => {
@@ -105,7 +105,7 @@ module.exports.updateUserProfile = (req, res, next) => {
     .then((user) => {
       res.status(SUCCESS_CODE).send({ data: user });
     })
-    .catch((err) => { checkErr(err, res, next); });
+    .catch((err) => { checkErr(err, next); });
 };
 
 module.exports.updateUserAvatar = (req, res, next) => {
@@ -119,7 +119,7 @@ module.exports.updateUserAvatar = (req, res, next) => {
     .then((user) => {
       res.status(SUCCESS_CODE).send({ data: user });
     })
-    .catch((err) => { checkErr(err, res, next); });
+    .catch((err) => { checkErr(err, next); });
 };
 
 module.exports.login = (req, res, next) => {

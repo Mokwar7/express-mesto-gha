@@ -3,14 +3,7 @@ const jwt = require('jsonwebtoken');
 const NotCorrectTokenError = require('../utils/notCorrectTokenError')
 
 module.exports = (req, res, next) => {
-  const { authorization } = req.headers;
-
-  if (!authorization || !authorization.startsWith('Bearer ')) {
-    next(new NotCorrectTokenError('Необходима авторизация'));
-    return;
-  }
-
-  const token = authorization.replace('Bearer ', '');
+  const token = req.cookies.jwt;
 
   let payload;
 
@@ -22,7 +15,6 @@ module.exports = (req, res, next) => {
   }
 
   req.user = payload;
-  res.send(token);
 
   next();
   return;
