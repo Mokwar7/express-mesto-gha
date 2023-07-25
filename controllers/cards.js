@@ -20,7 +20,7 @@ module.exports.getAllCards = (req, res, next) => {
     .then((cards) => {
       res.status(SUCCESS_CODE).send({ data: cards });
     })
-    .catch((err) => { checkError(err, next) });
+    .catch((err) => { checkError(err, next); });
 };
 
 module.exports.createCard = (req, res, next) => {
@@ -30,7 +30,7 @@ module.exports.createCard = (req, res, next) => {
     .then((card) => {
       res.status(CREATE_CODE).send({ data: card });
     })
-    .catch((err) => { checkError(err, next) });
+    .catch((err) => { checkError(err, next); });
 };
 
 module.exports.deleteCard = (req, res, next) => {

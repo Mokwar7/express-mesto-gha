@@ -75,12 +75,19 @@ module.exports.createUser = (req, res, next) => {
       })
         .then((user) => {
           const { 
-            email, 
-            name, 
-            about, 
-            avatar 
+            email,
+            name,
+            about,
+            avatar,
           } = user;
-          res.status(CREATE_CODE).send({ email, name, about, avatar });
+          res
+            .status(CREATE_CODE)
+            .send({ 
+              email,
+              name,
+              about,
+              avatar,
+            });
         })
         .catch((err) => {
           if (err.name === 'ValidationError' || err.name === 'CastError') {
