@@ -74,7 +74,7 @@ module.exports.createUser = (req, res, next) => {
         email,
       })
         .then((user) => {
-          const { 
+          const {
             email,
             name,
             about,
@@ -82,7 +82,7 @@ module.exports.createUser = (req, res, next) => {
           } = user;
           res
             .status(CREATE_CODE)
-            .send({ 
+            .send({
               email,
               name,
               about,
