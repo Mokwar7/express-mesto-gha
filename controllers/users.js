@@ -136,5 +136,15 @@ module.exports.login = (req, res, next) => {
         })
         .send({message: 'авторизация прошла успешно'});
     })
-    .catch((err) => { checkErr(err, res, next); });
+    .catch((err) => { 
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        next(new NotCorrectTokenError(`Data validation error: ${err.message}`));
+        return;
+      }
+      if (err.code === 11000) {
+        next(new AlreadyUsedError('User with this email already exist'));
+        return;
+      }
+      next(err);
+     });
 };
