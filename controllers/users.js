@@ -34,19 +34,27 @@ module.exports.getAllUsers = (req, res, next) => {
 
 module.exports.getUser = (req, res, next) => {
   User.findById(req.params.id)
-    .orFail()
+    .orFail(() => { checkErr(err, res, next) })
     .then((user) => {
       res.status(SUCCESS_CODE).send({ data: user });
     })
-    .catch((err) => { checkErr(err, res, next); });
+    .catch(next);
 };
 
 module.exports.getMyInfo = (req, res, next) => {
-  User.findById(req.user._id)
+  const { _id = 100 } = req.user
+
+  User.findById(_id)
     .then((user) => {
       res.status(SUCCESS_CODE).send({ data: user });
     })
-    .catch((err) => { checkErr(err, res, next); });
+    .catch((err) => {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        next(new NotCorrectDataError(`Data validation error: ${err.message}`));
+        return;
+      }
+      next(err);
+    });
 };
 
 module.exports.createUser = (req, res, next) => {
