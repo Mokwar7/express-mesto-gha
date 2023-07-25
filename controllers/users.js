@@ -3,12 +3,28 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/users');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
-const checkErr = require('../utils/checkErr');
 const NotCorrectTokenError = require('../utils/notCorrectTokenError');
+const NotCorrectDataError = require('../utils/notCorrectDataError');
+const NotFindError = require('../utils/notFindError');
 const {
   SUCCESS_CODE,
   CREATE_CODE,
 } = require('../utils/codes');
+
+const checkErr = (err, next) => {
+  console.log(err.name)
+  if (err.name === 'ValidationError' || err.name === 'CastError') {
+    next(new NotCorrectDataError(`Data validation error: ${err.message}`));
+    return;
+  }
+  if (error.code === 11000) {
+    next(res.status(CONFLICT).send({
+      message: `User with this email already exists (${error.message})`,
+    }));
+    return;
+  }
+  next(err);
+};
 
 module.exports.getAllUsers = (req, res, next) => {
   User.find({})
