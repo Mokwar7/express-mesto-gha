@@ -62,11 +62,12 @@ app.use(errors());
 
 app.use((err, req, res, next) => {
   const { statusCode = 500, message, name} = err;
-  //убрать name
+  //убрать name и вернуть условное выражение
   res
     .status(statusCode)
     .send({ 
-      message: statusCode === 500 ? 'На сервере произошла ошибка' : message,
+      //message: statusCode === 500 ? 'На сервере произошла ошибка' : message,
+      message: message,
       name: name
     });
 

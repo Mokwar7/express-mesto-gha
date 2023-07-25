@@ -34,9 +34,7 @@ module.exports.getAllUsers = (req, res, next) => {
 };
 
 module.exports.getMyInfo = (req, res, next) => {
-  const { _id = 100 } = req.user
-
-  User.findById(_id)
+  User.findById(req.user._id)
     .then((user) => {
       res.status(SUCCESS_CODE).send({ data: user });
     })
