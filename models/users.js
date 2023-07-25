@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
-
 const NotCorrectTokenError = require('../utils/notCorrectTokenError');
 
 const userSchema = new mongoose.Schema({

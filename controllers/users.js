@@ -6,6 +6,7 @@ const { NODE_ENV, JWT_SECRET } = process.env;
 const NotCorrectTokenError = require('../utils/notCorrectTokenError');
 const NotCorrectDataError = require('../utils/notCorrectDataError');
 const AlreadyUsedError = require('../utils/alreadyUsedError');
+const NotFindError = require('../utils/notFindError');
 const {
   SUCCESS_CODE,
   CREATE_CODE,
@@ -32,15 +33,6 @@ module.exports.getAllUsers = (req, res, next) => {
     .catch((err) => { checkErr(err, res, next); });
 };
 
-module.exports.getUser = (req, res, next) => {
-  User.findById(req.params.id)
-    .orFail(() => { checkErr(err, res, next) })
-    .then((user) => {
-      res.status(SUCCESS_CODE).send({ data: user });
-    })
-    .catch(next);
-};
-
 module.exports.getMyInfo = (req, res, next) => {
   const { _id = 100 } = req.user
 
@@ -55,6 +47,15 @@ module.exports.getMyInfo = (req, res, next) => {
       }
       next(err);
     });
+};
+
+module.exports.getUser = (req, res, next) => {
+  User.findById(req.params.id)
+    .orFail(() => new NotFindError('User is not found'))
+    .then((user) => {
+      res.status(SUCCESS_CODE).send({ data: user });
+    })
+    .catch(next);
 };
 
 module.exports.createUser = (req, res, next) => {
