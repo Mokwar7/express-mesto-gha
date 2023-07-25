@@ -5,7 +5,7 @@ const User = require('../models/users');
 const { NODE_ENV, JWT_SECRET } = process.env;
 const NotCorrectTokenError = require('../utils/notCorrectTokenError');
 const NotCorrectDataError = require('../utils/notCorrectDataError');
-const NotFindError = require('../utils/notFindError');
+const AlreadyUsedError = require('../utils/alreadyUsedError');
 const {
   SUCCESS_CODE,
   CREATE_CODE,
@@ -18,9 +18,7 @@ const checkErr = (err, next) => {
     return;
   }
   if (error.code === 11000) {
-    next(res.status(CONFLICT).send({
-      message: `User with this email already exists (${error.message})`,
-    }));
+    next(new AlreadyUsedError('User with this email already exist'));
     return;
   }
   next(err);

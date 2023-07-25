@@ -45,7 +45,7 @@ app.post('/signup', celebrate({
     avatar: Joi.string().uri(),
   }),
 }), createUser)
-//вернуть апп юз
+
 app.use(auth);
 
 app.use('/users', require('./routes/users'));
