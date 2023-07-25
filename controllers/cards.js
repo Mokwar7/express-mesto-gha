@@ -52,9 +52,8 @@ module.exports.deleteCard = (req, res, next) => {
 
 module.exports.putLike = (req, res, next) => {
   const { cardId } = req.params;
-  const { _id } = req.user;
 
-  Cards.findByIdAndUpdate(cardId, { $addToSet: { likes: _id } }, {
+  Cards.findByIdAndUpdate(cardId, { $addToSet: { likes: req.user._id } }, {
     new: true,
   })
     .orFail(() => new NotFindError('Card is not found'))
@@ -66,8 +65,8 @@ module.exports.putLike = (req, res, next) => {
 
 module.exports.deleteLike = (req, res, next) => {
   const { cardId } = req.params;
-  const { _id } = req.user;
-  Cards.findByIdAndUpdate(cardId, { $pull: { likes: _id } }, {
+
+  Cards.findByIdAndUpdate(cardId, { $pull: { likes: req.user._id } }, {
     new: true,
   })
     .orFail(() => new NotFindError('Card is not found'))
