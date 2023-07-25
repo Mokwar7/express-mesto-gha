@@ -13,7 +13,6 @@ const {
 } = require('../utils/codes');
 
 const checkErr = (err, next) => {
-  console.log(err.name)
   if (err.name === 'ValidationError' || err.name === 'CastError') {
     next(new NotCorrectDataError(`Data validation error: ${err.message}`));
     return;
@@ -75,7 +74,12 @@ module.exports.createUser = (req, res, next) => {
         email,
       })
         .then((user) => {
-          const { email, name, about, avatar } = user;
+          const { 
+            email, 
+            name, 
+            about, 
+            avatar 
+          } = user;
           res.status(CREATE_CODE).send({ email, name, about, avatar });
         })
         .catch((err) => {
@@ -141,9 +145,9 @@ module.exports.login = (req, res, next) => {
           httpOnly: true,
           sameSite: true,
         })
-        .send({message: 'авторизация прошла успешно'});
+        .send({ message: 'авторизация прошла успешно' });
     })
-    .catch((err) => { 
+    .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
         next(new NotCorrectTokenError(`Data validation error: ${err.message}`));
         return;
@@ -153,5 +157,5 @@ module.exports.login = (req, res, next) => {
         return;
       }
       next(err);
-     });
+    });
 };

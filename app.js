@@ -6,9 +6,9 @@ const mongoose = require('mongoose');
 
 const { celebrate, Joi, errors } = require('celebrate');
 
-const NotFindError = require('./utils/notFindError');
-
 const cookieParser = require('cookie-parser');
+
+const NotFindError = require('./utils/notFindError');
 
 const auth = require('./middlewares/auth');
 
@@ -47,9 +47,9 @@ app.post('/signup', celebrate({
     about: Joi.string().min(2).max(30),
     avatar: Joi.string().pattern(/^(http|ftp|https)?(\:\/\/)?[\w-]+(\.[\w-]+)+([\w.,@?^!=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])+$/),
   }),
-}), createUser)
+}), createUser);
 
-//app.use(auth);
+app.use(auth);
 
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
@@ -61,14 +61,13 @@ app.use('*', (req, res, next) => {
 app.use(errors());
 
 app.use((err, req, res, next) => {
-  const { statusCode = 500, message, name} = err;
-  //убрать name и вернуть условное выражение
+  const { statusCode = 500, message, name } = err;
+
   res
     .status(statusCode)
     .send({ 
-      //message: statusCode === 500 ? 'На сервере произошла ошибка' : message,
-      message: message,
-      name: name
+      message: statusCode === 500 ? 'На сервере произошла ошибка' : message,
+      name: name,
     });
 
   next();

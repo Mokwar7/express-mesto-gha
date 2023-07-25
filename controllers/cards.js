@@ -8,20 +8,19 @@ const NotFindError = require('../utils/notFindError');
 const NotAcces = require('../utils/notAcces');
 
 const checkError = (err, next) => {
-  console.log(err.name)
   if (err.name === 'ValidationError' || err.name === 'CastError') {
     next(new NotCorrectDataError(`Data validation error: ${err.message}`));
     return;
   }
   next(err);
-}
+};
 
 module.exports.getAllCards = (req, res, next) => {
   Cards.find({})
     .then((cards) => {
       res.status(SUCCESS_CODE).send({ data: cards });
     })
-    .catch(err => checkError(err, next));
+    .catch((err) => { checkError(err, next) });
 };
 
 module.exports.createCard = (req, res, next) => {
@@ -31,7 +30,7 @@ module.exports.createCard = (req, res, next) => {
     .then((card) => {
       res.status(CREATE_CODE).send({ data: card });
     })
-    .catch(err => checkError(err, next));
+    .catch((err) => { checkError(err, next) });
 };
 
 module.exports.deleteCard = (req, res, next) => {
@@ -44,7 +43,7 @@ module.exports.deleteCard = (req, res, next) => {
         next(new NotAcces('Вы не владелец карточки'));
         return;
       }
-      Card.deleteOne(card)
+      Cards.deleteOne(card)
         .then((result) => res.send(result));
     })
     .catch(next);

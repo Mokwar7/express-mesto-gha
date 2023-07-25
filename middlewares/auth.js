@@ -1,6 +1,6 @@
 const { NODE_ENV, JWT_SECRET } = process.env;
 const jwt = require('jsonwebtoken');
-const NotCorrectTokenError = require('../utils/notCorrectTokenError')
+const NotCorrectTokenError = require('../utils/notCorrectTokenError');
 
 module.exports = (req, res, next) => {
   const token = req.cookies.jwt;
@@ -17,5 +17,4 @@ module.exports = (req, res, next) => {
   req.user = payload;
 
   next();
-  return;
 };
