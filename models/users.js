@@ -35,7 +35,7 @@ const userSchema = new mongoose.Schema({
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     validate: {
       validator: (data) => {
-        const regex = /^(http|ftp|https)?(\/\/)?[\w-]+(\.[\w-]+)+([\w.,@?^!=%&amp;:~+#-]*[\w@?^=%&amp;~+#-])+$/gmi;
+        const regex = /^(http|ftp|https)?(\:\/\/)?[\w-]+(\.[\w-]+)+([\w.,@?^!=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])+$/gmi;
         return regex.test(data);
       },
       message: 'Это не ссылка',

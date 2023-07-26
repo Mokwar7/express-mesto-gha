@@ -56,38 +56,14 @@ module.exports.getUser = (req, res, next) => {
 };
 
 module.exports.createUser = (req, res, next) => {
-  const {
-    name,
-    about,
-    avatar,
-    password,
-    email,
-  } = req.body;
+  const { name, about, avatar, password, email } = req.body;
 
   bcrypt.hash(password, 10)
     .then((hash) => {
-      User.create({
-        name,
-        about,
-        avatar,
-        password: hash,
-        email,
-      })
+      User.create({ name, about, avatar, password: hash, email })
         .then((user) => {
-          const {
-            email,
-            name,
-            about,
-            avatar,
-          } = user;
-          res
-            .status(CREATE_CODE)
-            .send({
-              email,
-              name,
-              about,
-              avatar,
-            });
+          const { email, name, about, avatar } = user;
+          res.status(CREATE_CODE).send({ email, name, about, avatar });
         })
         .catch((err) => { checkErr(err, next); });
     })
