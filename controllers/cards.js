@@ -44,7 +44,8 @@ module.exports.deleteCard = (req, res, next) => {
         return;
       }
       Cards.deleteOne(card)
-        .then((result) => res.send(result));
+        .then((result) => res.send(result))
+        .catch(next);
     })
     .catch(next);
 };
