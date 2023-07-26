@@ -79,14 +79,14 @@ module.exports.createUser = (req, res, next) => {
             name, // eslint-disable-line no-shadow
             about, // eslint-disable-line no-shadow
             avatar, // eslint-disable-line no-shadow
-          } = user; 
+          } = user;
           res
             .status(CREATE_CODE)
             .send({
               email,
               name,
               about,
-              avatar
+              avatar,
             });
         })
         .catch((err) => { checkErr(err, next); });
