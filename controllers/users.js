@@ -74,6 +74,7 @@ module.exports.createUser = (req, res, next) => {
         email,
       })
         .then((user) => {
+          // eslint-disable-next-line no-shadow
           const {
             email,
             name,
@@ -89,7 +90,7 @@ module.exports.createUser = (req, res, next) => {
               avatar,
             });
         })
-        .catch((err) => { checkErr(err, next) });
+        .catch((err) => { checkErr(err, next); });
     })
     .catch(next);
 };
@@ -145,5 +146,5 @@ module.exports.login = (req, res, next) => {
         })
         .send({ message: 'авторизация прошла успешно' });
     })
-    .catch(next)
+    .catch(next);
 };

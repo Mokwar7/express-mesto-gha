@@ -14,6 +14,8 @@ const auth = require('./middlewares/auth');
 
 const { PORT = 3000 } = process.env;
 
+const regex = /^(http|ftp|https)?(\:\/\/)?[\w-]+(\.[\w-]+)+([\w.,@?^!=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])+$/;
+
 const app = express();
 
 const {
@@ -45,7 +47,7 @@ app.post('/signup', celebrate({
     password: Joi.string().required().min(8),
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().pattern(/^(http|ftp|https)?(\:\/\/)?[\w-]+(\.[\w-]+)+([\w.,@?^!=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])+$/),
+    avatar: Joi.string().pattern(regex),
   }),
 }), createUser);
 
@@ -53,8 +55,9 @@ app.use(auth);
 
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
-app.get('/signout', (req, res) => { 
-  res.clearCookie('jwt').send({ message: 'Выход' }); 
+
+app.get('/signout', (req, res) => {
+  res.clearCookie('jwt').send({ message: 'Выход' });
 });
 
 app.use('*', (req, res, next) => {
