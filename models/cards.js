@@ -12,7 +12,7 @@ const cardSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: (data) => {
-        const regex = /^(http|ftp|https)?(\:\/\/)?[\w-]+(\.[\w-]+)+([\w.,@?^!=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])+$/gmi;
+        const regex = /^(http|ftp|https)?(\/\/)?[\w-]+(\.[\w-]+)+([\w.,@?^!=%&amp;:~+#-]*[\w@?^=%&amp;~+#-])+$/gmi;
         return regex.test(data);
       },
       message: 'Это не ссылка',
