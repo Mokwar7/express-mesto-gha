@@ -74,14 +74,15 @@ module.exports.createUser = (req, res, next) => {
         email,
       })
         .then((user) => {
+          const {
+            email,
+            name,
+            about,
+            avatar,
+          } = user;
           res
             .status(CREATE_CODE)
-            .send({
-              email: user.email,
-              name: user.name,
-              about: user.about,
-              avatar: user.avatar,
-            });
+            .send({ email, name, about, avatar }); // eslint-disable-line no-shadow
         })
         .catch((err) => { checkErr(err, next); });
     })
