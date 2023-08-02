@@ -12,9 +12,17 @@ const NotFindError = require('./utils/notFindError');
 
 const auth = require('./middlewares/auth');
 
+const { requestLogger, errorLogger } = require('./middlewares/logger');
+
 const { PORT = 3000 } = process.env;
 
 const app = express();
+
+const allowedCors = [
+  'https://praktikum.tk',
+  'http://praktikum.tk',
+  'localhost:3000'
+];
 
 const {
   login,
@@ -31,8 +39,28 @@ mongoose.connect('mongodb://0.0.0.0:27017/mestodb', {
     console.log(err);
   });
 
+app.use(function(req, res, next) {
+  const { origin } = req.headers;
+  const { method } = req;
+  const requestHeaders = req.headers['access-control-request-headers']; 
+
+  const DEFAULT_ALLOWED_METHODS = "GET,HEAD,PUT,PATCH,POST,DELETE";
+
+  if (method === 'OPTIONS') {
+    res.header('Access-Control-Allow-Headers', requestHeaders);
+    res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
+    return res.end();
+  }
+  if (allowedCors.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+    return res.end();
+  }
+
+  next();
+}); 
 app.use(express.json());
 app.use(cookieParser());
+app.use(requestLogger);
 app.post('/signin', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
@@ -61,6 +89,8 @@ app.get('/signout', (req, res) => {
 app.use('*', (req, res, next) => {
   next(new NotFindError('Данная страница не найдена'));
 });
+
+app.use(errorLogger);
 
 app.use(errors());
 
